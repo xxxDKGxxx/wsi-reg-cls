@@ -1,0 +1,3 @@
+correlated_columns_cleanup_params:
+  target_column_name: growth direction
+  threshold: 0.8
