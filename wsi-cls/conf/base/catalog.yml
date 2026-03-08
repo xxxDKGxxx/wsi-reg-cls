@@ -98,3 +98,15 @@
 ortodoncja:
   type: pandas.CSVDataset
   filepath: data/01_raw/ortodoncja.csv
+
+ortodoncja_target_enc:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/ortodoncja_target_enc.csv
+
+ortodoncja_increment_feat_eng:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/ortodoncja_increment_feat_eng.csv
+
+ortodoncja_corr_cols_cleanup:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/ortodoncja_corr_cols_cleanup.csv
