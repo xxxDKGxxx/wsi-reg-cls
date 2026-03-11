@@ -6,24 +6,6 @@ from .nodes import enc_target, increment_feature_engineering, correlated_columns
 def create_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
         [
-            # Node(
-            #     func=preprocess_companies,
-            #     inputs="companies",
-            #     outputs="preprocessed_companies",
-            #     name="preprocess_companies_node",
-            # ),
-            # Node(
-            #     func=preprocess_shuttles,
-            #     inputs="shuttles",
-            #     outputs="preprocessed_shuttles",
-            #     name="preprocess_shuttles_node",
-            # ),
-            # Node(
-            #     func=create_model_input_table,
-            #     inputs=["preprocessed_shuttles", "preprocessed_companies", "reviews"],
-            #     outputs="model_input_table",
-            #     name="create_model_input_table_node",
-            # ),
             Node(
                 func=enc_target,
                 inputs="ortodoncja",
@@ -32,7 +14,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
             Node(
                 func=increment_feature_engineering,
-                inputs="ortodoncja_target_enc",
+                inputs=["ortodoncja_target_enc", "params:feature_eng_params"],
                 outputs="ortodoncja_increment_feat_eng",
                 name="increment_feature_engineering_node",
             ),
@@ -43,5 +25,17 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="ortodoncja_corr_cols_cleanup",
                 name="correlated_columns_cleanup_node",
             )
+            # Node(
+            #     func=split,
+            #     inputs=["ortodoncja_corr_cols_cleanup", "params:experiment_params"],
+            #     outputs=["X_train", "X_test", "y_train", "y_test"],
+            #     name="split_node"
+            # ),
+            # Node(
+            #     func=isolation_forest_outlier_removal,
+            #     inputs=["X_train", "y_train", "params:isolation_forest_params", "params:experiment_params"],
+            #     outputs=["X_train_final", "y_train_final"],
+            #     name="isolation_forest_outlier_removal_node",
+            # )
         ]
     )

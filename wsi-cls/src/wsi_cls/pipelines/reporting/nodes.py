@@ -1,55 +1,52 @@
-import matplotlib
-import matplotlib.pyplot as plt
+import math
+
 import pandas as pd
-import plotly.express as px  # noqa:  F401
-import plotly.graph_objs as go
-import seaborn as sn
+import seaborn as sns
+from matplotlib import pyplot as plt
+from matplotlib.figure import Figure
 
 
-# This function uses plotly.express
-def compare_passenger_capacity_exp(preprocessed_shuttles: pd.DataFrame):
-    return (
-        preprocessed_shuttles.groupby(["shuttle_type"])
-        .mean(numeric_only=True)
-        .reset_index()
+def corr_matrix_report(df: pd.DataFrame) -> Figure :
+    corr_matrix = df.corr(numeric_only=True)
+
+    fig = plt.figure(figsize=(20, 20))
+
+    sns.heatmap(
+        corr_matrix,
+        cmap='coolwarm',
+        annot=True,
+        fmt=".2f",
+        linewidths=0.5
     )
 
-
-# This function uses plotly.graph_objects
-def compare_passenger_capacity_go(preprocessed_shuttles: pd.DataFrame):
-
-    data_frame = (
-        preprocessed_shuttles.groupby(["shuttle_type"])
-        .mean(numeric_only=True)
-        .reset_index()
-    )
-    fig = go.Figure(
-        [
-            go.Bar(
-                x=data_frame["shuttle_type"],
-                y=data_frame["passenger_capacity"],
-            )
-        ]
-    )
+    plt.title("Macierz Korelacji", fontsize=16)
 
     return fig
 
 
-def create_confusion_matrix(companies: pd.DataFrame):
-    matplotlib.use('Agg')
+def plot_distributions(dataframe: pd.DataFrame) -> plt.Figure:
+    numeric_cols = dataframe.select_dtypes(include=['number']).columns
+    n_cols = len(numeric_cols)
 
-    actuals = [0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1]
-    predicted = [1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1]
-    data = {"y_Actual": actuals, "y_Predicted": predicted}
-    df = pd.DataFrame(data, columns=["y_Actual", "y_Predicted"])
+    cols_grid = round(math.sqrt(n_cols))
+    rows_grid = math.ceil(n_cols / cols_grid)
 
-    confusion_matrix = pd.crosstab(
-        df["y_Actual"], df["y_Predicted"], rownames=["Actual"], colnames=["Predicted"]
-    )
+    fig, axes = plt.subplots(rows_grid, cols_grid, figsize=(20, 5 * rows_grid))
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sn.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
-    ax.set_title('Confusion Matrix')
-    plt.tight_layout()
+    axes = axes.flatten()
+
+    for idx, col in enumerate(numeric_cols):
+        ax = axes[idx]
+
+        sns.histplot(data=dataframe, x=col, ax=ax, kde=True, bins=30, color="skyblue")
+
+        ax.set_title(f'Rozkład: {col}', fontweight='bold')
+        ax.set_ylabel('Liczba wystąpień')
+        ax.set_xlabel('')
+
+    for i in range(n_cols, len(axes)):
+        fig.delaxes(axes[i])
+
+    fig.tight_layout()
 
     return fig
