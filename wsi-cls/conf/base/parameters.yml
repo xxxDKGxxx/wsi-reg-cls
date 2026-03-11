@@ -1,0 +1,3 @@
+experiment_params:
+  random_state: 42
+  target_column_name: growth direction

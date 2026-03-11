@@ -77,7 +77,10 @@ def enc_target(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-def increment_feature_engineering(df: pd.DataFrame) -> pd.DataFrame:
+def increment_feature_engineering(df: pd.DataFrame, params: dict) -> pd.DataFrame:
+    difference = params["difference"]
+    ratio = params["ratio"]
+
     all_columns: list[str] = list(df.columns)
 
     nine_y_columns = [column for column in all_columns if column.startswith("9_")]
@@ -85,11 +88,16 @@ def increment_feature_engineering(df: pd.DataFrame) -> pd.DataFrame:
 
     parameter_names = [column[2:] for column in nine_y_columns]
 
-    for parameter_name in parameter_names:
-        df[parameter_name + "_diff"] = df["12_" + parameter_name] - df["9_" + parameter_name]
-        df[parameter_name + "_rat"] = df["12_" + parameter_name] / df["9_" + parameter_name]
+    if difference:
+        for parameter_name in parameter_names:
+            df[parameter_name + "_diff"] = df["12_" + parameter_name] - df["9_" + parameter_name]
+
+    if ratio:
+        for parameter_name in parameter_names:
+            df[parameter_name + "_rat"] = df["12_" + parameter_name] / df["9_" + parameter_name]
 
     df = df.drop(columns=twelve_y_columns)
+
     return df
 
 
@@ -124,3 +132,28 @@ def correlated_columns_cleanup(df: pd.DataFrame, params: dict) -> pd.DataFrame:
     df = df.drop(columns=columns_to_remove)
 
     return df
+#
+# def isolation_forest_outlier_removal(
+#         X_train: pd.DataFrame,
+#         y_train: pd.DataFrame,
+#         isolation_forest_params: dict,
+#         experiment_params: dict) -> pd.DataFrame:
+#
+#     contamination = isolation_forest_params["contamination"]
+#     random_state = experiment_params["random_state"]
+#
+#     iso_forest = IsolationForest(contamination=contamination, random_state=random_state)
+#
+#     outlier_labels = iso_forest.fit_predict(df.drop(columns=['growth direction']))
+#
+#     df = df[outlier_labels == 1]
+#
+#     return df
+#
+# def split(df: pd.DataFrame, experiment_params: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+#     random_state = experiment_params['random_state']
+#
+#     X, y = df
+#     X_train, X_test, y_train, y_test = train_test_split(df, random_state=random_state)
+#
+#     return X_train, X_test, y_train, y_test

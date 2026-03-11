@@ -110,3 +110,11 @@ ortodoncja_increment_feat_eng:
 ortodoncja_corr_cols_cleanup:
   type: pandas.CSVDataset
   filepath: data/04_feature/ortodoncja_corr_cols_cleanup.csv
+
+ortodoncja_corr_matrix:
+  type: matplotlib.MatplotlibDataset
+  filepath: data/08_reporting/ortodoncja_corr_matrix.png
+
+ortodoncja_distributions:
+  type: matplotlib.MatplotlibDataset
+  filepath: data/08_reporting/ortodoncja_distributions.png
