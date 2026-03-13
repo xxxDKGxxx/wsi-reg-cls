@@ -1,28 +1,22 @@
 from kedro.pipeline import Node, Pipeline
 
-from .nodes import create_model_input_table, preprocess_companies, preprocess_shuttles
+from .nodes import small_categories_cleanup, fill_missing_values
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
         [
             Node(
-                func=preprocess_companies,
-                inputs="companies",
-                outputs="preprocessed_companies",
-                name="preprocess_companies_node",
+                func=fill_missing_values,
+                inputs="domy",
+                outputs="domy_fill_missing_values",
+                name="fill_missing_values_node",
             ),
             Node(
-                func=preprocess_shuttles,
-                inputs="shuttles",
-                outputs="preprocessed_shuttles",
-                name="preprocess_shuttles_node",
-            ),
-            Node(
-                func=create_model_input_table,
-                inputs=["preprocessed_shuttles", "preprocessed_companies", "reviews"],
-                outputs="model_input_table",
-                name="create_model_input_table_node",
-            ),
+                func=small_categories_cleanup,
+                inputs="domy_fill_missing_values",
+                outputs="domy_small_categories_cleanup",
+                name="small_categories_cleanup_node",
+            )
         ]
     )
