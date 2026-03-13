@@ -172,10 +172,4 @@ def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     kol = 'PoolQC'
     zmiana = 'None'
     df[kol] = df[kol].replace('?', zmiana)
-
-    # object_cols = df.select_dtypes(include=['object']).columns
-    # for col in object_cols:
-    #     df[col] = df[col].fillna('asd')
-    #     df[col] = df[col].astype(str)
-    df['MiscFeature'].fillna(14)
     return df
