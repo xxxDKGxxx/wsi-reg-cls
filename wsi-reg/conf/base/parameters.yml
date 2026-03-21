@@ -1,0 +1,4 @@
+experiment_params:
+  random_state: 42
+  target_column_name: SalePrice
+  test_size: 0.1
