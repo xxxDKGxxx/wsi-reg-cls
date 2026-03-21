@@ -1,3 +1,9 @@
 experiment_params:
   random_state: 42
   target_column_name: growth direction
+  test_size: 0.4
+  scoring:
+    - accuracy
+    - f1_macro
+    - precision_macro
+    - recall_macro

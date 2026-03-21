@@ -6,5 +6,5 @@ feature_eng_params:
   difference: True
   ratio: True
 
-isolation_forest_params:
-  contamination: auto
+k_best_params:
+  k: 20

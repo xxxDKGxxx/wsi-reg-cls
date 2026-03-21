@@ -16,7 +16,8 @@ dependencies = [
     "kedro-viz>=6.7.0",
     "scikit-learn~=1.5.1",
     "seaborn>=0.13",
-    "matplotlib>=3.10"
+    "matplotlib>=3.10",
+    "xgboost==3.2.0"
 ]
 
 [project.scripts]

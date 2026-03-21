@@ -1,6 +1,6 @@
 from kedro.pipeline import Node, Pipeline
 
-from .nodes import enc_target, increment_feature_engineering, correlated_columns_cleanup
+from .nodes import enc_target, increment_feature_engineering, correlated_columns_cleanup, select_k_best
 
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -24,18 +24,13 @@ def create_pipeline(**kwargs) -> Pipeline:
                         "params:correlated_columns_cleanup_params"],
                 outputs="ortodoncja_corr_cols_cleanup",
                 name="correlated_columns_cleanup_node",
+            ),
+            Node(
+                func=select_k_best,
+                inputs=["ortodoncja_corr_cols_cleanup", "params:k_best_params", "params:experiment_params"],
+                outputs="ortodoncja_select_k_best",
+                name="select_k_best_node_node",
             )
-            # Node(
-            #     func=split,
-            #     inputs=["ortodoncja_corr_cols_cleanup", "params:experiment_params"],
-            #     outputs=["X_train", "X_test", "y_train", "y_test"],
-            #     name="split_node"
-            # ),
-            # Node(
-            #     func=isolation_forest_outlier_removal,
-            #     inputs=["X_train", "y_train", "params:isolation_forest_params", "params:experiment_params"],
-            #     outputs=["X_train_final", "y_train_final"],
-            #     name="isolation_forest_outlier_removal_node",
-            # )
+
         ]
     )

@@ -4,6 +4,8 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
+from sklearn.model_selection import cross_validate
+from sklearn.pipeline import Pipeline
 
 
 def corr_matrix_report(df: pd.DataFrame) -> Figure :
@@ -50,3 +52,10 @@ def plot_distributions(dataframe: pd.DataFrame) -> plt.Figure:
     fig.tight_layout()
 
     return fig
+
+def evaluate_model_cv(model: Pipeline, X_train, y_train, model_params: dict, experiment_params: dict) -> pd.DataFrame:
+    res = cross_validate(model, X_train, y_train, scoring=experiment_params['scoring'])
+
+    res_df = pd.DataFrame(res).agg(['mean', 'std']).T
+
+    return res_df
