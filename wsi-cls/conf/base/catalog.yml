@@ -118,3 +118,34 @@ ortodoncja_corr_matrix:
 ortodoncja_distributions:
   type: matplotlib.MatplotlibDataset
   filepath: data/08_reporting/ortodoncja_distributions.png
+
+ortodoncja_select_k_best:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/ortodoncja_select_k_best.csv
+
+logistic_regression_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/logistic_regression_model.pkl
+  backend: joblib
+
+SVC_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/svc_model.pkl
+  backend: joblib
+
+XGBoost_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/xgboost_model.pkl
+  backend: joblib
+
+logistic_regression_cv_report:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/logistic_regression_cv_report.csv
+
+svc_cv_report:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/svc_cv_report.csv
+
+xgboost_cv_report:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/xgboost_cv_report.csv

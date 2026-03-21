@@ -1,6 +1,6 @@
 from kedro.pipeline import Node, Pipeline
 
-from .nodes import corr_matrix_report, plot_distributions
+from .nodes import corr_matrix_report, plot_distributions, evaluate_model_cv
 
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -18,6 +18,25 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs="ortodoncja_corr_cols_cleanup",
                 outputs="ortodoncja_distributions",
                 name="distributions_node"
+            ),
+            Node(
+                func=evaluate_model_cv,
+                inputs=["logistic_regression_model", "X_train", "y_train", "params:logistic_regression_params",
+                                                                                   "params:experiment_params"],
+                outputs="logistic_regression_cv_report",
+                name="logistic_regression_cv_report_node"
+            ),
+            Node(
+                func=evaluate_model_cv,
+                inputs=["SVC_model",  "X_train", "y_train", "params:svc_params", "params:experiment_params"],
+                outputs="svc_cv_report",
+                name="svc_cv_report_node"
+            ),
+            Node(
+                func=evaluate_model_cv,
+                inputs=["XGBoost_model",  "X_train", "y_train", "params:xgboost_params","params:experiment_params"],
+                outputs="xgboost_cv_report",
+                name="xgboost_cv_report_node"
             )
         ]
     )
