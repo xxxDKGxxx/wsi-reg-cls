@@ -1,6 +1,6 @@
 from kedro.pipeline import Node, Pipeline
 
-from .nodes import small_categories_cleanup, fill_missing_values
+from .nodes import small_categories_cleanup, fill_missing_values, numerical_cleanup
 
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -17,6 +17,12 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs="domy_fill_missing_values",
                 outputs="domy_small_categories_cleanup",
                 name="small_categories_cleanup_node",
+            ),
+            Node(
+                func=numerical_cleanup,
+                inputs="domy_small_categories_cleanup",
+                outputs="domy_numerical_cleanup",
+                name="numerical_cleanup_node",
             )
         ]
     )

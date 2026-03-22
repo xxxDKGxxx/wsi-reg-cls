@@ -92,8 +92,13 @@ def small_categories_cleanup(df: pd.DataFrame) -> pd.DataFrame:
     freq = df['HouseStyle'].value_counts(normalize=True)
     df['HouseStyle'] = df['HouseStyle'].replace(freq[freq < 0.11].index.tolist(), 'Other')
 
+    df.drop('LandSlope', axis=1, inplace=True)
+
     df['LandContour'] = df['LandContour'].apply(lambda x: 1 if x == 'Lvl' else 0)
     df = df.rename(columns={'LandContour': 'IsFlat'})
+
+    freq = df['LotConfig'].value_counts(normalize=True)
+    df['LotConfig'] = df['LotConfig'].replace(freq[freq < 0.7].index.tolist(), 'Other')
 
     grades = {
         'IR3': 1,
@@ -177,3 +182,36 @@ def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     df[kol] = df[kol].replace('?', zmiana)
     return df
 
+def numerical_cleanup(df: pd.DataFrame) -> pd.DataFrame:
+    cols_to_drop = ['3SsnPorch', 'BsmtFinSF2', 'Alley_Pave', 'Alley_Grvl', 'Alley_Pave', 'Condition1_Pos',
+                    'KitchenAbvGr', 'LowQualFinSF', 'MasVnrType_Lack', 'RoofStyle_Other', 'SaleCondition_Other',
+                    'SaleType_COD', 'SaleType_Other']
+    df = df.drop(columns=cols_to_drop)
+
+    add_binary_cols = ['PoolArea', 'EnclosedPorch', 'MasVnrArea', 'MiscVal', 'OpenPorchSF', 'ScreenPorch', 'WoodDeckSF']
+    for col in add_binary_cols:
+        df[f'{col}_bin'] = (df[col] != 0).astype(int)
+
+    cols_to_log = ['EnclosedPorch', 'MasVnrArea', 'OpenPorchSF', 'ScreenPorch', 'WoodDeckSF']
+    for col in cols_to_log:
+        df[f'{col}_log'] = np.log1p(df[col])
+
+    df = df.drop(columns=add_binary_cols)
+
+    df['1stAnd2ndFlrSF'] = df['1stFlrSF'] + df['2ndFlrSF']
+    df.drop('1stFlrSF', axis=1, inplace=True)
+    df.drop('2ndFlrSF', axis=1, inplace=True)
+
+    cols_with_years = ['GarageYrBlt', 'YearBuilt', 'YearRemodAdd']
+
+    reference_year = df['YrSold'].max()
+
+    df['GarageAge'] = np.where(df['GarageYrBlt'] > 0, reference_year - df['GarageYrBlt'], 0)
+    df['HasGarage'] = (df['GarageYrBlt'] > 0).astype(int)
+    df['HouseAge'] = reference_year - df['YearBuilt']
+    df['RemodAge'] = reference_year - df['YearRemodAdd']
+
+    df = df.drop(columns=cols_with_years)
+    df = df.sort_index(axis=1)
+
+    return df

@@ -6,6 +6,10 @@ domy_small_categories_cleanup:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/domy_small_categories_cleanup.csv
 
+domy_numerical_cleanup:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/domy_numerical_cleanup.csv
+
 domy_fill_missing_values:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/domy_fill_missing_values.csv
