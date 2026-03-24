@@ -1,10 +1,4 @@
-correlated_columns_cleanup_params:
-  target_column_name: growth direction
-  threshold: 0.9
-
 feature_eng_params:
   difference: True
-  ratio: True
-
-k_best_params:
-  k: 20
+  ratio: False
+  drop_twelve: True

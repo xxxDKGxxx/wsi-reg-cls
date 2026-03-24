@@ -107,21 +107,34 @@ ortodoncja_increment_feat_eng:
   type: pandas.CSVDataset
   filepath: data/04_feature/ortodoncja_increment_feat_eng.csv
 
-ortodoncja_corr_cols_cleanup:
-  type: pandas.CSVDataset
-  filepath: data/04_feature/ortodoncja_corr_cols_cleanup.csv
-
-ortodoncja_corr_matrix:
+ortodoncja_corr_matrix_train:
   type: matplotlib.MatplotlibDataset
-  filepath: data/08_reporting/ortodoncja_corr_matrix.png
+  filepath: data/08_reporting/ortodoncja_corr_matrix_train.png
 
-ortodoncja_distributions:
+ortodoncja_distributions_train:
   type: matplotlib.MatplotlibDataset
-  filepath: data/08_reporting/ortodoncja_distributions.png
+  filepath: data/08_reporting/ortodoncja_distributions_train.png
 
-ortodoncja_select_k_best:
+ortodoncja_corr_matrix_test:
+  type: matplotlib.MatplotlibDataset
+  filepath: data/08_reporting/ortodoncja_corr_matrix_test.png
+
+ortodoncja_distributions_test:
+  type: matplotlib.MatplotlibDataset
+  filepath: data/08_reporting/ortodoncja_distributions_test.png
+
+X_train":
   type: pandas.CSVDataset
-  filepath: data/04_feature/ortodoncja_select_k_best.csv
+  filepath: data/04_feature/X_train_corr_columns_cleanup.csv
+X_test:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/X_test_corr_columns_cleanup.csv
+y_train:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/y_train_corr_columns_cleanup.csv
+y_test:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/y_test_corr_columns_cleanup.csv
 
 logistic_regression_model:
   type: pickle.PickleDataset
@@ -141,11 +154,53 @@ XGBoost_model:
 logistic_regression_cv_report:
   type: pandas.CSVDataset
   filepath: data/08_reporting/logistic_regression_cv_report.csv
+  save_args:
+    index: true
 
 svc_cv_report:
   type: pandas.CSVDataset
   filepath: data/08_reporting/svc_cv_report.csv
+  save_args:
+    index: true
 
 xgboost_cv_report:
   type: pandas.CSVDataset
   filepath: data/08_reporting/xgboost_cv_report.csv
+  save_args:
+    index: true
+
+logistic_regression_test_report:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/logistic_regression_test_report.csv
+  save_args:
+    index: true
+
+svc_test_report:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/svc_test_report.csv
+  save_args:
+    index: true
+
+xgboost_test_report:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/xgboost_test_report.csv
+  save_args:
+    index: true
+
+logistic_regression_diagnostics:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/logistic_regression_diagnostics.csv
+  save_args:
+    index: true
+
+svc_diagnostics:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/svc_diagnostics.csv
+  save_args:
+    index: true
+
+xgboost_diagnostics:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/xgboost_diagnostics.csv
+  save_args:
+    index: true

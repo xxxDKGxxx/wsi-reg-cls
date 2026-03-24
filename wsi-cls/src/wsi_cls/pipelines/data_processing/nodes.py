@@ -1,18 +1,16 @@
 import pandas as pd
-from sklearn.feature_selection import SelectKBest
-from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
 
 def enc_target(df: pd.DataFrame) -> pd.DataFrame:
-    enc = LabelEncoder()
-    enc.fit(df[["growth direction"]])
-    df["growth direction"] = enc.transform(df[["growth direction"]])
+    df['growth direction'] = df['growth direction'].map({ 'normal': 0, 'horizontal' : 1, 'vertical': 2 })
 
     return df
 
 def increment_feature_engineering(df: pd.DataFrame, params: dict) -> pd.DataFrame:
     difference = params["difference"]
     ratio = params["ratio"]
+    drop_twelve = params["drop_twelve"]
 
     all_columns: list[str] = list(df.columns)
 
@@ -29,50 +27,17 @@ def increment_feature_engineering(df: pd.DataFrame, params: dict) -> pd.DataFram
         for parameter_name in parameter_names:
             df[parameter_name + "_rat"] = df["12_" + parameter_name] / df["9_" + parameter_name]
 
-    df = df.drop(columns=twelve_y_columns)
+    if drop_twelve:
+        df = df.drop(columns=twelve_y_columns)
 
     return df
 
+def split(df: pd.DataFrame, experiment_params: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    random_state = experiment_params['random_state']
+    target_column = experiment_params['target_column_name']
+    test_size = experiment_params['test_size']
 
-def correlated_columns_cleanup(df: pd.DataFrame, params: dict) -> pd.DataFrame:
-    target_column_name = params["target_column_name"]
-    threshold = params["threshold"]
+    X, y = df.drop(columns=target_column), df[target_column]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=random_state, test_size=test_size)
 
-    corr_matrix = df.corr(numeric_only=True)
-
-    columns = list(corr_matrix.columns)
-    columns.remove(target_column_name)
-    columns_len = len(columns)
-
-    columns_to_remove = []
-
-    for first_column_idx in range(0, columns_len):
-        for second_column_idx in range(first_column_idx + 1, columns_len):
-            first_column_name = columns[first_column_idx]
-            second_column_name = columns[second_column_idx]
-
-            if abs(corr_matrix.loc[first_column_name, second_column_name]) < threshold:
-                continue
-
-            column_name_to_remove = first_column_name if abs(
-                corr_matrix.loc[first_column_name, target_column_name]) > abs(
-                corr_matrix.loc[second_column_name, target_column_name]) else second_column_name
-
-            columns_to_remove.append(column_name_to_remove)
-
-    print("Removing correlated columns: ", columns_to_remove)
-
-    df = df.drop(columns=columns_to_remove)
-
-    return df
-
-def select_k_best(df: pd.DataFrame, params: dict, experiment_params: dict) -> pd.DataFrame:
-    k = params["k"]
-    target_column_name = experiment_params["target_column_name"]
-
-    selector = SelectKBest(k=k)
-    selector.set_output(transform='pandas')
-
-    X = selector.fit_transform(df.drop(columns=target_column_name), df[target_column_name])
-
-    return pd.concat([X, df[target_column_name]], axis=1)
+    return X_train, X_test, y_train, y_test
