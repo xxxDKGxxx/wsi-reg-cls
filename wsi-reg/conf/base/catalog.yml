@@ -14,6 +14,18 @@ domy_fill_missing_values:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/domy_fill_missing_values.csv
 
+domy_drop_dominant_columns:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/domy_drop_dominant_columns.csv
+
+domy_encode_static_mappings:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/domy_encode_static_mappings.csv
+
+domy_group_rare_categories:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/domy_group_rare_categories.csv
+
 x_train_raw:
   type: pandas.CSVDataset
   filepath: data/05_model_input/x_train_raw.csv

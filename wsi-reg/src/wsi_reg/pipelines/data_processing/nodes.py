@@ -215,3 +215,83 @@ def numerical_cleanup(df: pd.DataFrame) -> pd.DataFrame:
     df = df.sort_index(axis=1)
 
     return df
+
+def encode_static_mappings(df: pd.DataFrame) -> pd.DataFrame:
+    grades = {'Ex': 5, 'Gd': 4, 'TA': 3, 'Fa': 2, 'Po': 1, 'Lack': 0}
+    columns_to_map = ['ExterQual', 'ExterCond', 'BsmtQual', 'BsmtCond', 'HeatingQC', 'KitchenQual', 'FireplaceQu',
+                      'GarageQual', 'GarageCond']
+
+    for col in columns_to_map:
+        if col in df.columns:
+            df[col] = df[col].map(grades)
+
+    if 'BsmtExposure' in df.columns:
+        grades = {'Lack': 0, 'No': 1, 'Mn': 2, 'Av': 3, 'Gd': 4}
+        df['BsmtExposure'] = df['BsmtExposure'].map(grades)
+
+    if 'BsmtFinType1' in df.columns:
+        grades = {'Lack': 0, 'Unf': 1, 'LwQ': 2, 'Rec': 3, 'BLQ': 4, 'ALQ': 5, 'GLQ': 6}
+        df['BsmtFinType1'] = df['BsmtFinType1'].map(grades)
+        df.rename(columns={'BsmtFinType1': 'BsmtFinType1Ovrl'}, inplace=True)
+
+    if 'CentralAir' in df.columns:
+        df['CentralAir'] = df['CentralAir'].map({'Y': 1, 'N': 0})
+
+    if 'Condition1' in df.columns:
+        grades = {'Artery': 'Noise', 'RRAn': 'Noise', 'RRAe': 'Noise', 'Feedr': 'Noise', 'RRNn': 'Noise',
+                  'RRNe': 'Noise', 'Norm': 'Norm', 'PosN': 'Pos', 'PosA': 'Pos'}
+        df['Condition1'] = df['Condition1'].map(grades)
+
+    if 'Electrical' in df.columns:
+        df['Electrical'] = df['Electrical'].apply(lambda x: 1 if x == 'SBrkr' else 0)
+        df.rename(columns={'Electrical': 'IsStandardElectrical'}, inplace=True)
+
+    if 'Fence' in df.columns:
+        grades = {'NoFence': 0, 'MnPrv': 1, 'MnWw': 1, 'GdWo': 2, 'GdPrv': 2}
+        df['Fence'] = df['Fence'].map(grades)
+        df.rename(columns={'Fence': 'FenceOvrl'}, inplace=True)
+
+    if 'GarageFinish' in df.columns:
+        grades = {'Lack': 0, 'Unf': 1, 'RFn': 2, 'Fin': 3}
+        df['GarageFinish'] = df['GarageFinish'].map(grades)
+
+    if 'LandContour' in df.columns:
+        df['LandContour'] = df['LandContour'].apply(lambda x: 1 if x == 'Lvl' else 0)
+        df.rename(columns={'LandContour': 'IsFlat'}, inplace=True)
+
+    if 'LotShape' in df.columns:
+        grades = {'IR3': 1, 'IR2': 2, 'IR1': 3, 'Reg': 4}
+        df['LotShape'] = df['LotShape'].map(grades)
+
+    if 'PavedDrive' in df.columns:
+        df['PavedDrive'] = df['PavedDrive'].map({'Y': 1, 'N': 0, 'P': 1})
+
+    if 'MasVnrType' in df.columns:
+        df['MasVnrType'] = df['MasVnrType'].replace(['BrkFace', 'BrkCmn'], 'Brick')
+    return df
+
+def group_rare_categories(df: pd.DataFrame, experiment_params: dict) -> pd.DataFrame:
+    threshold = experiment_params['group_columns_threshold']
+
+    not_numeric_columns = df.select_dtypes(include=['object', 'string']).columns.tolist()
+    columns_to_check = [col for col in not_numeric_columns if
+                         col not in ['Exterior1st', 'Exterior2nd', 'Neighborhood']]
+
+    for col in columns_to_check:
+        freq = df[col].value_counts(normalize=True)
+        rare_categories = freq[freq < threshold].index.tolist()
+
+        if rare_categories:
+            df[col] = df[col].replace(rare_categories, 'Other')
+    return df
+
+def drop_dominant_columns(df: pd.DataFrame, experiment_params: dict) -> pd.DataFrame:
+    threshold = experiment_params['drop_columns_threshold']
+    cols_to_drop = []
+    for col in df.columns:
+        max_freq = df[col].value_counts(normalize=True, dropna=False).max()
+        if max_freq >= threshold and df[col].dtype in ['object', 'string']:
+            cols_to_drop.append(col)
+    for col in cols_to_drop:
+        df.drop(col, axis=1, inplace=True)
+    return df
