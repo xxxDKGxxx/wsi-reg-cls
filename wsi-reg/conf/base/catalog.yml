@@ -26,7 +26,11 @@ y_test:
   type: pandas.CSVDataset
   filepath: data/05_model_input/y_test.csv
 
-trained_model:
+trained_pipeline:
   type: pickle.PickleDataset
-  filepath: data/06_models/xgboost_model.pkl
+  filepath: data/06_models/xgboost_pipeline.pkl
   versioned: true
+
+evaluation_metrics:
+  type: json.JSONDataset
+  filepath: data/07_model_output/metrics.json
