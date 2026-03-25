@@ -71,9 +71,9 @@ class BalancedMultiClassXGBoost(BaseEstimator, ClassifierMixin):
 def train_logistic_regression(X_train: pd.DataFrame, y_train: pd.Series, experiment_params: dict) -> Pipeline:
 
     model = make_pipeline(
-        # CorrelatedColumnsCleaner(threshold=experiment_params['corr_threshold']),
+        CorrelatedColumnsCleaner(threshold=experiment_params['corr_threshold']),
         # SelectKBest(k=experiment_params['k_best_k']),
-        # StandardScaler(),
+        StandardScaler(),
         LogisticRegression(random_state=experiment_params['random_state'], **experiment_params[
             "logistic_regression_params"]))
     model.fit(X_train, y_train)
@@ -82,7 +82,7 @@ def train_logistic_regression(X_train: pd.DataFrame, y_train: pd.Series, experim
 
 def train_svc(X_train: pd.DataFrame, y_train: pd.Series, experiment_params: dict) -> Pipeline:
     model = make_pipeline(
-        # CorrelatedColumnsCleaner(threshold=experiment_params['corr_threshold']),
+        CorrelatedColumnsCleaner(threshold=experiment_params['corr_threshold']),
         # SelectKBest(k=experiment_params['k_best_k']),
         # StandardScaler(),
         SVC(random_state=experiment_params['random_state'], **experiment_params["svc_params"]))
@@ -92,9 +92,9 @@ def train_svc(X_train: pd.DataFrame, y_train: pd.Series, experiment_params: dict
 
 def train_xgboost(X_train: pd.DataFrame, y_train: pd.Series, experiment_params: dict) -> Pipeline:
     model = make_pipeline(
-       #  CorrelatedColumnsCleaner(threshold=experiment_params['corr_threshold']),
+       CorrelatedColumnsCleaner(threshold=experiment_params['corr_threshold']),
        # SelectKBest(k=experiment_params['k_best_k']),
-       #  StandardScaler(),
+       # StandardScaler(),
         BalancedMultiClassXGBoost(random_state=experiment_params['random_state']))
     model.fit(X_train, y_train)
 

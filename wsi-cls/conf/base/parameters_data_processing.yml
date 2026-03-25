@@ -1,4 +1,4 @@
 feature_eng_params:
-  difference: True
+  difference: False
   ratio: False
-  drop_twelve: True
+  drop_twelve: False
