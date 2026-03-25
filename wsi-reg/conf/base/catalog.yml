@@ -2,30 +2,6 @@ domy:
   type: pandas.CSVDataset
   filepath: data/01_raw/domy.csv
 
-domy_small_categories_cleanup:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/domy_small_categories_cleanup.csv
-
-domy_numerical_cleanup:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/domy_numerical_cleanup.csv
-
-domy_fill_missing_values:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/domy_fill_missing_values.csv
-
-domy_drop_dominant_columns:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/domy_drop_dominant_columns.csv
-
-domy_encode_static_mappings:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/domy_encode_static_mappings.csv
-
-domy_group_rare_categories:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/domy_group_rare_categories.csv
-
 x_train_raw:
   type: pandas.CSVDataset
   filepath: data/05_model_input/x_train_raw.csv
@@ -49,3 +25,8 @@ x_test_encoded:
 y_test:
   type: pandas.CSVDataset
   filepath: data/05_model_input/y_test.csv
+
+trained_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/xgboost_model.pkl
+  versioned: true

@@ -1,135 +1,6 @@
 import pandas as pd
 import numpy as np
 
-def small_categories_cleanup(df: pd.DataFrame) -> pd.DataFrame:
-    threshold = 0.95
-    cols_to_drop = []
-    for col in df.columns:
-        max_freq = df[col].value_counts(normalize=True, dropna=False).max()
-        if max_freq >= threshold and df[col].dtype in ['object', 'string']:
-            cols_to_drop.append(col)
-    print(f"Usunięto {len(cols_to_drop)} kolumn zdominowanych w >={threshold * 100}%:")
-    print(cols_to_drop)
-    for col in cols_to_drop:
-        df.drop(col, axis=1, inplace=True)
-
-    mapowanie_ocen = {'Ex': 5, 'Gd': 4, 'TA': 3, 'Fa': 2, 'Po': 1, 'Lack': 0}
-    kolumny_do_zmiany = ['ExterQual', 'ExterCond', 'BsmtQual', 'BsmtCond', 'HeatingQC', 'KitchenQual', 'FireplaceQu',
-                         'GarageQual', 'GarageCond']
-
-    for kol in kolumny_do_zmiany:
-        df[kol] = df[kol].map(mapowanie_ocen)
-
-    freq = df['BldgType'].value_counts(normalize=True)
-    df['BldgType'] = df['BldgType'].replace(freq[freq < 0.1].index.tolist(), 'Other')
-
-    grades = {
-        'Lack': 0,
-        'No': 1,
-        'Mn': 2,
-        'Av': 3,
-        'Gd': 4
-    }
-    df['BsmtExposure'] = df['BsmtExposure'].map(grades)
-
-    grades = {
-        'Lack': 0,
-        'Unf': 1,
-        'LwQ': 2,
-        'Rec': 3,
-        'BLQ': 4,
-        'ALQ': 5,
-        'GLQ': 6
-    }
-    df['BsmtFinType1'] = df['BsmtFinType1'].map(grades)
-    df.rename(columns={'BsmtFinType1': 'BsmtFinType1Ovrl'}, inplace=True)
-
-    df.drop('BsmtFinType2', axis=1, inplace=True)
-
-    df['CentralAir'] = df['CentralAir'].map({'Y': 1, 'N': 0})
-
-    grades = {
-        'Artery': 'Noise',
-        'RRAn': 'Noise',
-        'RRAe': 'Noise',
-        'Feedr': 'Noise',
-        'RRNn': 'Noise',
-        'RRNe': 'Noise',
-        'Norm': 'Norm',
-        'PosN': 'Pos',
-        'PosA': 'Pos'
-    }
-    df['Condition1'] = df['Condition1'].map(grades)
-
-    df['Electrical'] = df['Electrical'].apply(lambda x: 1 if x == 'SBrkr' else 0)
-    df = df.rename(columns={'Electrical': 'IsStandardElectrical'})
-
-    grades = {
-        'NoFence': 0,
-        'MnPrv': 1,
-        'MnWw': 1,
-        'GdWo': 2,
-        'GdPrv': 2}
-    df['Fence'] = df['Fence'].map(grades)
-    df.rename(columns={'Fence': 'FenceOvrl'}, inplace=True)
-
-    freq = df['Foundation'].value_counts(normalize=True)
-    df['Foundation'] = df['Foundation'].replace(freq[freq < 0.11].index.tolist(), 'Other')
-
-    df.drop('Functional', axis=1, inplace=True)
-
-    grades = {
-        'Lack': 0,
-        'Unf': 1,
-        'RFn': 2,
-        'Fin': 3
-    }
-    df['GarageFinish'] = df['GarageFinish'].map(grades)
-
-    freq = df['GarageType'].value_counts(normalize=True)
-    df['GarageType'] = df['GarageType'].replace(freq[freq < 0.07].index.tolist(), 'Other')
-
-    freq = df['HouseStyle'].value_counts(normalize=True)
-    df['HouseStyle'] = df['HouseStyle'].replace(freq[freq < 0.11].index.tolist(), 'Other')
-
-    df.drop('LandSlope', axis=1, inplace=True)
-
-    df['LandContour'] = df['LandContour'].apply(lambda x: 1 if x == 'Lvl' else 0)
-    df = df.rename(columns={'LandContour': 'IsFlat'})
-
-    freq = df['LotConfig'].value_counts(normalize=True)
-    df['LotConfig'] = df['LotConfig'].replace(freq[freq < 0.7].index.tolist(), 'Other')
-
-    grades = {
-        'IR3': 1,
-        'IR2': 2,
-        'IR1': 3,
-        'Reg': 4
-    }
-    df['LotShape'] = df['LotShape'].map(grades)
-
-    df['MSZoning'] = df['MSZoning'].replace(['FV', 'RH', "'C (all)'"], 'Other')
-
-    df['MasVnrType'] = df['MasVnrType'].replace(['BrkFace', 'BrkCmn'], 'Brick')
-
-    df['PavedDrive'] = df['PavedDrive'].map({'Y': 1, 'N': 0, 'P': 1})
-
-    freq = df['RoofStyle'].value_counts(normalize=True)
-    df['RoofStyle'] = df['RoofStyle'].replace(freq[freq < 0.1].index.tolist(), 'Other')
-
-    freq = df['SaleCondition'].value_counts(normalize=True)
-    df['SaleCondition'] = df['SaleCondition'].replace(freq[freq < 0.03].index.tolist(), 'Other')
-
-    freq = df['SaleType'].value_counts(normalize=True)
-    df['SaleType'] = df['SaleType'].replace(freq[freq < 0.025].index.tolist(), 'Other')
-
-    not_numeric_columns = df.select_dtypes(include=['object', 'string']).columns.tolist()
-    columns_to_encode = [col for col in not_numeric_columns if
-                            col not in ['Exterior1st', 'Exterior2nd', 'Neighborhood']]
-
-    df = pd.get_dummies(df, columns=columns_to_encode, dtype=int)
-    return df
-
 def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     df['Alley'] = df['Alley'].replace('?', 'NoAlley')
 
@@ -182,22 +53,7 @@ def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     df[kol] = df[kol].replace('?', zmiana)
     return df
 
-def numerical_cleanup(df: pd.DataFrame) -> pd.DataFrame:
-    cols_to_drop = ['3SsnPorch', 'BsmtFinSF2', 'Alley_Pave', 'Alley_Grvl', 'Alley_Pave', 'Condition1_Pos',
-                    'KitchenAbvGr', 'LowQualFinSF', 'MasVnrType_Lack', 'RoofStyle_Other', 'SaleCondition_Other',
-                    'SaleType_COD', 'SaleType_Other']
-    df = df.drop(columns=cols_to_drop)
-
-    add_binary_cols = ['PoolArea', 'EnclosedPorch', 'MasVnrArea', 'MiscVal', 'OpenPorchSF', 'ScreenPorch', 'WoodDeckSF']
-    for col in add_binary_cols:
-        df[f'{col}_bin'] = (df[col] != 0).astype(int)
-
-    cols_to_log = ['EnclosedPorch', 'MasVnrArea', 'OpenPorchSF', 'ScreenPorch', 'WoodDeckSF']
-    for col in cols_to_log:
-        df[f'{col}_log'] = np.log1p(df[col])
-
-    df = df.drop(columns=add_binary_cols)
-
+def numerical_cleanup(df: pd.DataFrame, experiment_params: dict) -> pd.DataFrame:
     df['1stAnd2ndFlrSF'] = df['1stFlrSF'] + df['2ndFlrSF']
     df.drop('1stFlrSF', axis=1, inplace=True)
     df.drop('2ndFlrSF', axis=1, inplace=True)
@@ -212,7 +68,22 @@ def numerical_cleanup(df: pd.DataFrame) -> pd.DataFrame:
     df['RemodAge'] = reference_year - df['YearRemodAdd']
 
     df = df.drop(columns=cols_with_years)
-    df = df.sort_index(axis=1)
+
+    threshold = experiment_params['drop_threshold']
+    cols_to_drop = []
+    for col in df.columns:
+        max_freq = df[col].value_counts(normalize=True, dropna=False).max()
+        if max_freq >= threshold:
+            cols_to_drop.append(col)
+    for col in cols_to_drop:
+        df.drop(col, axis=1, inplace=True)
+
+    target_cols = [col for col in df.columns if (df[col] == 0).mean() > 0.4 and df[col].nunique() > 11]
+    for col in target_cols:
+        df[f'{col}_bin'] = (df[col] != 0).astype(int)
+    for col in target_cols:
+        df[f'{col}_log'] = np.log1p(df[col])
+    df = df.drop(columns=target_cols)
 
     return df
 

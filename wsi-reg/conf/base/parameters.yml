@@ -1,6 +1,13 @@
 experiment_params:
-  random_state: 42
-  target_column_name: SalePrice
-  test_size: 0.1
   drop_columns_threshold: 0.92
   group_columns_threshold: 0.1
+  drop_threshold: 0.95
+
+split_options:
+  test_size: 0.2
+  random_state: 42
+
+model_params:
+  n_estimators: 100
+  max_depth: 6
+  learning_rate: 0.1
