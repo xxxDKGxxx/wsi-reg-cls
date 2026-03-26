@@ -59,6 +59,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="xgboost_cv_report",
                 name="xgboost_cv_report_node"
             ),
+            # BASE TEST EVALUATION
             Node(
                 func=evaluate_model_test,
                 inputs=["logistic_regression_model",
@@ -67,7 +68,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                         "X_test",
                         "y_test",
                         "params:experiment_params"],
-                outputs="logistic_regression_test_report",
+                outputs=["logistic_regression_test_report", "logistic_regression_test_cm"],
                 name="logistic_regression_test_report_node"
             ),
             Node(
@@ -78,7 +79,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                         "X_test",
                         "y_test",
                         "params:experiment_params"],
-                outputs="svc_test_report",
+                outputs=["svc_test_report", "svc_test_cm"],
                 name="svc_test_report_node"
             ),
             Node(
@@ -89,24 +90,58 @@ def create_pipeline(**kwargs) -> Pipeline:
                         "X_test",
                         "y_test",
                         "params:experiment_params"],
-                outputs="xgboost_test_report",
+                outputs=["xgboost_test_report", "xgboost_test_cm"],
                 name="xgboost_test_report_node"
+            ),
+            # GS TEST EVALUATION
+            Node(
+                func=evaluate_model_test,
+                inputs=["logistic_regression_gs_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["logistic_regression_gs_test_report", "logistic_regression_gs_test_cm"],
+                name="logistic_regression_gs_test_report_node"
+            ),
+            Node(
+                func=evaluate_model_test,
+                inputs=["svc_gs_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["svc_gs_test_report", "svc_gs_test_cm"],
+                name="svc_gs_test_report_node"
+            ),
+            Node(
+                func=evaluate_model_test,
+                inputs=["xgboost_gs_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["xgboost_gs_test_report", "xgboost_gs_test_cm"],
+                name="xgboost_gs_test_report_node"
             ),
             Node(
                 func=diagnose_per_class_metrics,
-                inputs=["logistic_regression_model", "X_train", "y_train"],
+                inputs=["logistic_regression_model", "X_train", "y_train", "params:experiment_params"],
                 outputs="logistic_regression_diagnostics",
                 name="logistic_regression_diagnostics_node"
             ),
             Node(
                 func=diagnose_per_class_metrics,
-                inputs=["SVC_model", "X_train", "y_train"],
+                inputs=["SVC_model", "X_train", "y_train", "params:experiment_params"],
                 outputs="svc_diagnostics",
                 name="svc_diagnostics_node"
             ),
             Node(
                 func=diagnose_per_class_metrics,
-                inputs=["XGBoost_model", "X_train", "y_train"],
+                inputs=["XGBoost_model", "X_train", "y_train", "params:experiment_params"],
                 outputs="xgboost_diagnostics",
                 name="xgboost_diagnostics_node"
             )

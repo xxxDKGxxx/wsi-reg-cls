@@ -6,13 +6,14 @@ experiment_params:
     - 999
   target_column_name: growth direction
   test_size: 0.4
-  corr_threshold: 0.7
+  corr_threshold: 0.8
   k_best_k: 20
   scoring:
     - accuracy
     - f1_macro
     - precision_macro
     - recall_macro
+  gs_scoring: recall_macro
   logistic_regression_params:
     class_weight: balanced
   svc_params:
