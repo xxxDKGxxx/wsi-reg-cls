@@ -1,13 +1,31 @@
-experiment_params:
-  drop_columns_threshold: 0.92
-  group_columns_threshold: 0.1
-  drop_threshold: 0.95
-
 split_options:
   test_size: 0.2
   random_state: 42
 
-model_params:
-  n_estimators: 100
-  max_depth: 6
-  learning_rate: 0.1
+param_grid_full_pipeline:
+  xgboost__n_estimators: [100, 200, 300]
+  xgboost__max_depth: [4, 6, 8]
+  xgboost__learning_rate: [0.05, 0.1]
+  xgboost__random_state: [42]
+  numerical_engineer__drop_threshold: [0.97, 0.99]
+  dominant_dropper__drop_threshold: [0.95, 0.98]
+  rare_grouper__threshold: [0.05, 0.15]
+
+param_grid_minimal:
+  xgboost__n_estimators: [100, 200, 300]
+  xgboost__max_depth: [4, 6, 8]
+  xgboost__learning_rate: [0.05, 0.1]
+  xgboost__random_state: [42]
+
+param_grid_categories:
+  xgboost__n_estimators: [100, 200, 300]
+  xgboost__max_depth: [4, 6, 8]
+  xgboost__learning_rate: [0.05, 0.1]
+  xgboost__random_state: [42]
+  dominant_dropper__drop_threshold: [0.95, 0.98]
+  rare_grouper__threshold: [0.05, 0.15]
+
+rkf_params:
+  n_splits: 4
+  n_repeats: 3
+  random_state: 42

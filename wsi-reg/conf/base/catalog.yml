@@ -34,3 +34,62 @@ trained_pipeline:
 evaluation_metrics:
   type: json.JSONDataset
   filepath: data/07_model_output/metrics.json
+
+best_pipeline:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_xgboost_pipeline.pkl
+  versioned: true
+
+best_params:
+  type: json.JSONDataset
+  filepath: data/07_model_output/best_params.json
+
+tuning_metrics:
+  type: json.JSONDataset
+  filepath: data/07_model_output/tuning_metrics.json
+
+all_experiments_results:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/all_experiments_cv_results.csv
+  versioned: true
+
+best_pipeline_minimal:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_xgboost_minimal.pkl
+  versioned: true
+
+best_params_minimal:
+  type: json.JSONDataset
+  filepath: data/07_model_output/best_params_minimal.json
+
+tuning_metrics_minimal:
+  type: json.JSONDataset
+  filepath: data/07_model_output/tuning_metrics_minimal.json
+
+evaluation_metrics_minimal:
+  type: json.JSONDataset
+  filepath: data/07_model_output/metrics_minimal.json
+
+all_experiments_results_minimal:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/all_experiments_cv_results_minimal.csv
+  versioned: true
+
+
+best_pipeline_categories:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_xgboost_categories.pkl
+  versioned: true
+
+best_params_categories:
+  type: json.JSONDataset
+  filepath: data/07_model_output/best_params_categories.json
+
+tuning_metrics_categories:
+  type: json.JSONDataset
+  filepath: data/07_model_output/tuning_metrics_categories.json
+
+all_experiments_results_categories:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/all_experiments_cv_results_categories.csv
+  versioned: true

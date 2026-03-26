@@ -257,32 +257,38 @@ class DataFrameRareCategoryGrouper(BaseEstimator, TransformerMixin):
         return X_transformed
 
 
-class DataFrameOneHotEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, exclude_cols=None):
-        self.exclude_cols = exclude_cols or []
-        self.encoder_ = None
-        self.cols_to_encode_ = []
+class DataFrameTargetEncoder(BaseEstimator, TransformerMixin):
+    def __init__(self, cols: list[str], smoothing: float = 1.0):
+        self.cols = cols
+        self.smoothing = smoothing
 
-    def fit(self, X, y=None):
-        all_obj_cols = X.select_dtypes(include=['object', 'string']).columns.tolist()
-        self.cols_to_encode_ = [c for c in all_obj_cols if c not in self.exclude_cols]
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> "DataFrameTargetEncoder":
+        self.global_mean_ = float(y.mean())
+        self.encoding_maps_ = {}
 
-        if self.cols_to_encode_:
-            self.encoder_ = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
-            self.encoder_.fit(X[self.cols_to_encode_])
+        for col in self.cols:
+            stats = (
+                y.groupby(X[col])
+                .agg(["mean", "count"])
+                .rename(columns={"mean": "cat_mean", "count": "n"})
+            )
+            smoother = stats["n"] / (stats["n"] + self.smoothing)
+            stats["encoded"] = smoother * stats["cat_mean"] + (1 - smoother) * self.global_mean_
+            self.encoding_maps_[col] = stats["encoded"].to_dict()
+
         return self
 
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        X_out = X.copy()
+        for col in self.cols:
+            X_out[col] = X_out[col].map(self.encoding_maps_[col]).fillna(self.global_mean_)
+        return X_out
+
+
+class DataFrameCategoryConverter(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None): return self
     def transform(self, X):
-        X_transformed = X.copy()
-        if not self.cols_to_encode_ or self.encoder_ is None:
-            return X_transformed
-
-        encoded_arrays = self.encoder_.transform(X_transformed[self.cols_to_encode_])
-        feature_names = self.encoder_.get_feature_names_out(self.cols_to_encode_)
-
-        encoded_df = pd.DataFrame(encoded_arrays, columns=feature_names, index=X_transformed.index)
-
-        X_transformed = X_transformed.drop(columns=self.cols_to_encode_)
-        X_transformed = pd.concat([X_transformed, encoded_df], axis=1)
-
-        return X_transformed
+        X_out = X.copy()
+        for col in X_out.select_dtypes(include='object').columns:
+            X_out[col] = X_out[col].astype('category')
+        return X_out
