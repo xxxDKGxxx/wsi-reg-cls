@@ -1,21 +1,22 @@
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
 class DataFrameOneHotEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, exclude_cols=None):
-        self.exclude_cols = exclude_cols or []
+        self.exclude_cols = exclude_cols
         self.encoder_ = None
         self.cols_to_encode_ = []
 
     def fit(self, X, y=None):
+        exclude = self.exclude_cols if self.exclude_cols is not None else []
         all_obj_cols = X.select_dtypes(include=['object', 'string']).columns.tolist()
-        self.cols_to_encode_ = [c for c in all_obj_cols if c not in self.exclude_cols]
+        self.cols_to_encode_ = [c for c in all_obj_cols if c not in exclude]
 
         if self.cols_to_encode_:
-            self.encoder_ = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+            self.encoder_ = OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore')
             self.encoder_.fit(X[self.cols_to_encode_])
         return self
 
@@ -100,7 +101,7 @@ class DataFrameMissingValuesImputer(BaseEstimator, TransformerMixin):
 
 
 class DataFrameNumericalEngineer(BaseEstimator, TransformerMixin):
-    def __init__(self, drop_threshold=0.95):
+    def __init__(self, drop_threshold=0.98):
         self.drop_threshold = drop_threshold
         self.reference_year_ = None
         self.cols_to_drop_ = []
@@ -213,7 +214,7 @@ class DataFrameStaticMappingsEncoder(BaseEstimator, TransformerMixin):
 
 
 class DataFrameDominantTextColumnDropper(BaseEstimator, TransformerMixin):
-    def __init__(self, drop_threshold=0.95):
+    def __init__(self, drop_threshold=0.98):
         self.drop_threshold = drop_threshold
         self.cols_to_drop_ = []
 
@@ -234,7 +235,7 @@ class DataFrameDominantTextColumnDropper(BaseEstimator, TransformerMixin):
 
 
 class DataFrameRareCategoryGrouper(BaseEstimator, TransformerMixin):
-    def __init__(self, threshold=0.05):
+    def __init__(self, threshold=0.1):
         self.threshold = threshold
         self.frequent_categories_ = {}
 
@@ -292,3 +293,20 @@ class DataFrameCategoryConverter(BaseEstimator, TransformerMixin):
         for col in X_out.select_dtypes(include='object').columns:
             X_out[col] = X_out[col].astype('category')
         return X_out
+
+class DataFrameStandardScaler(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        self.scaler_ = StandardScaler()
+        self.num_cols_ = []
+
+    def fit(self, X, y=None):
+        self.num_cols_ = X.select_dtypes(include=['int64', 'int32', 'float64', 'float32']).columns.tolist()
+        if self.num_cols_:
+            self.scaler_.fit(X[self.num_cols_])
+        return self
+
+    def transform(self, X):
+        X_transformed = X.copy()
+        if self.num_cols_ and hasattr(self.scaler_, 'scale_'):
+            X_transformed[self.num_cols_] = self.scaler_.transform(X_transformed[self.num_cols_])
+        return X_transformed

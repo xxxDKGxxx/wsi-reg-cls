@@ -2,6 +2,11 @@ domy:
   type: pandas.CSVDataset
   filepath: data/01_raw/domy.csv
 
+
+domy_fill_missing_values:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/domy_fill_missing_values.csv
+
 x_train_raw:
   type: pandas.CSVDataset
   filepath: data/05_model_input/x_train_raw.csv
@@ -93,3 +98,133 @@ all_experiments_results_categories:
   type: pandas.CSVDataset
   filepath: data/07_model_output/all_experiments_cv_results_categories.csv
   versioned: true
+
+best_pipeline_rf:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_rf_pipeline.pkl
+  versioned: true
+
+best_params_rf:
+  type: json.JSONDataset
+  filepath: data/07_model_output/best_params_rf.json
+
+tuning_metrics_rf:
+  type: json.JSONDataset
+  filepath: data/07_model_output/tuning_metrics_rf.json
+
+all_experiments_results_rf:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/all_experiments_cv_results_rf.csv
+  versioned: true
+
+evaluation_metrics_rf:
+  type: json.JSONDataset
+  filepath: data/07_model_output/metrics_rf.json
+
+cv_results_xgboost_simple:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/simple/cv_results_xgboost_simple.csv
+
+cv_results_rf_simple:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/simple/cv_results_rf_simple.csv
+
+cv_results_lr_simple:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/simple/cv_results_lr_simple.csv
+
+cv_results_xgboost_categories:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/categories_preprocess/cv_results_xgboost_categories.csv
+
+cv_results_rf_categories:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/categories_preprocess/cv_results_rf_categories.csv
+
+cv_results_lr_categories:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/categories_preprocess/cv_results_lr_categories.csv
+
+cv_results_xgboost_numerical:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/numerical_preprocess/cv_results_xgboost_numerical.csv
+
+cv_results_rf_numerical:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/numerical_preprocess/cv_results_rf_numerical.csv
+
+cv_results_lr_numerical:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/numerical_preprocess/cv_results_lr_numerical.csv
+
+cv_results_xgboost_full:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/full_preprocess/cv_results_xgboost_full.csv
+
+cv_results_rf_full:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/full_preprocess/cv_results_rf_full.csv
+
+cv_results_lr_full:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/full_preprocess/cv_results_lr_full.csv
+
+cv_results_xgboost_target_ohe:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/target_ohe_preprocess/cv_results_xgboost_target_ohe.csv
+
+cv_results_rf_target_ohe:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/target_ohe_preprocess/cv_results_rf_target_ohe.csv
+
+cv_results_lr_target_ohe:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/target_ohe_preprocess/cv_results_lr_target_ohe.csv
+
+cv_results_xgboost_kbest:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/kbest_preprocess/cv_results_xgboost_kbest.csv
+
+cv_results_rf_kbest:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/kbest_preprocess/cv_results_rf_kbest.csv
+
+cv_results_lr_kbest:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/kbest_preprocess/cv_results_lr_kbest.csv
+
+best_grid_model_xgb:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_grid_model_xgb.pkl
+
+best_grid_model_rf:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_grid_model_rf.pkl
+
+best_grid_model_lr:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_grid_model_lr.pkl
+
+final_test_metrics_xgb:
+  type: json.JSONDataset
+  filepath: data/08_reporting/final_test_metrics_xgb.json
+
+final_test_metrics_rf:
+  type: json.JSONDataset
+  filepath: data/08_reporting/final_test_metrics_rf.json
+
+final_test_metrics_lr:
+  type: json.JSONDataset
+  filepath: data/08_reporting/final_test_metrics_lr.json
+
+best_xgb_params:
+  type: json.JSONDataset
+  filepath: data/08_reporting/best_xgb_params.json
+
+best_rf_params:
+  type: json.JSONDataset
+  filepath: data/08_reporting/best_rf_params.json
+
+best_lr_params:
+  type: json.JSONDataset
+  filepath: data/08_reporting/best_lr_params.json

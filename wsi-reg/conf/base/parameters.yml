@@ -1,31 +1,28 @@
-split_options:
-  test_size: 0.2
+rs_params:
   random_state: 42
 
-param_grid_full_pipeline:
-  xgboost__n_estimators: [100, 200, 300]
-  xgboost__max_depth: [4, 6, 8]
-  xgboost__learning_rate: [0.05, 0.1]
-  xgboost__random_state: [42]
-  numerical_engineer__drop_threshold: [0.97, 0.99]
-  dominant_dropper__drop_threshold: [0.95, 0.98]
-  rare_grouper__threshold: [0.05, 0.15]
+split_options:
+  test_size: 0.2
 
-param_grid_minimal:
-  xgboost__n_estimators: [100, 200, 300]
-  xgboost__max_depth: [4, 6, 8]
-  xgboost__learning_rate: [0.05, 0.1]
-  xgboost__random_state: [42]
-
-param_grid_categories:
-  xgboost__n_estimators: [100, 200, 300]
-  xgboost__max_depth: [4, 6, 8]
-  xgboost__learning_rate: [0.05, 0.1]
-  xgboost__random_state: [42]
-  dominant_dropper__drop_threshold: [0.95, 0.98]
-  rare_grouper__threshold: [0.05, 0.15]
+param_grid_xgb:
+  xgboost__n_estimators: [50, 100, 200]
+  xgboost__max_depth: [3, 5, 7]
+  xgboost__learning_rate:  [0.01, 0.1, 0.2]
+  xgboost__subsample: [0.8, 1.0]
+  xgboost__colsample_bytree: [0.6, 0.8, 1.0]
 
 rkf_params:
   n_splits: 4
   n_repeats: 3
-  random_state: 42
+
+param_grid_rf:
+  random_forest__n_estimators: [100, 200, 300]
+  random_forest__max_depth: [10, 20, None]
+  random_forest__min_samples_leaf: [1, 2, 4]
+  random_forest__min_samples_split: [2, 5]
+
+param_grid_lr:
+  ridge_regression__alpha: [0.1, 1.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
+
+param_k_best:
+  percentile: 50
