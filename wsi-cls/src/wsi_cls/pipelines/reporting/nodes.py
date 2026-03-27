@@ -82,14 +82,14 @@ def evaluate_model_test(
     scoring = experiment_params.get("scoring", ["accuracy"])
     random_states = experiment_params.get("test_random_states", [42, 123, 999])
     all_results = []
-    
+
     last_predictions = None
 
     for rs in random_states:
         cloned_model = clone(model)
 
         model_step_name = cloned_model.steps[-1][0]
-        
+
         # Handle setting random_state for different model types
         # Some steps might not have random_state (like StandardScaler)
         params_to_set = {}
@@ -115,7 +115,7 @@ def evaluate_model_test(
     res_df = pd.DataFrame(all_results)
     summary_df = res_df.agg(['mean', 'std'])
     final_test_df = pd.concat([res_df, summary_df]).T
-    
+
     # Generate Confusion Matrix for the last run
     cm = confusion_matrix(y_test, last_predictions)
     fig, ax = plt.subplots(figsize=(10, 8))
