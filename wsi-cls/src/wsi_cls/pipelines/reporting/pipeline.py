@@ -1,30 +1,149 @@
 from kedro.pipeline import Node, Pipeline
 
-from .nodes import (
-    compare_passenger_capacity_exp,
-    compare_passenger_capacity_go,
-    create_confusion_matrix,
-)
+from .nodes import corr_matrix_report, plot_distributions, evaluate_model_cv, evaluate_model_test, \
+    diagnose_per_class_metrics
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     """This is a simple pipeline which generates a pair of plots"""
     return Pipeline(
         [
+           Node(
+               func=corr_matrix_report,
+               inputs=["X_train", "y_train"],
+               outputs="ortodoncja_corr_matrix_train",
+               name="correlation_matrix_train_node"
+           ),
             Node(
-                func=compare_passenger_capacity_exp,
-                inputs="preprocessed_shuttles",
-                outputs="shuttle_passenger_capacity_plot_exp",
+                func=plot_distributions,
+                inputs=["X_train", "y_train"],
+                outputs="ortodoncja_distributions_train",
+                name="distributions_train_node"
             ),
             Node(
-                func=compare_passenger_capacity_go,
-                inputs="preprocessed_shuttles",
-                outputs="shuttle_passenger_capacity_plot_go",
+                func=corr_matrix_report,
+                inputs=["X_test", "y_test"],
+                outputs="ortodoncja_corr_matrix_test",
+                name="correlation_matrix_test_node"
             ),
             Node(
-                func=create_confusion_matrix,
-                inputs="companies",
-                outputs="dummy_confusion_matrix",
+                func=plot_distributions,
+                inputs=["X_test", "y_test"],
+                outputs="ortodoncja_distributions_test",
+                name="distributions_test_node"
             ),
+            Node(
+                func=evaluate_model_cv,
+                inputs=["logistic_regression_model",
+                        "X_train",
+                        "y_train",
+                        "params:experiment_params"],
+                outputs="logistic_regression_cv_report",
+                name="logistic_regression_cv_report_node"
+            ),
+            Node(
+                func=evaluate_model_cv,
+                inputs=["SVC_model",
+                        "X_train",
+                        "y_train",
+                        "params:experiment_params"],
+                outputs="svc_cv_report",
+                name="svc_cv_report_node"
+            ),
+            Node(
+                func=evaluate_model_cv,
+                inputs=["XGBoost_model",
+                        "X_train",
+                        "y_train",
+                        "params:experiment_params"],
+                outputs="xgboost_cv_report",
+                name="xgboost_cv_report_node"
+            ),
+            # BASE TEST EVALUATION
+            Node(
+                func=evaluate_model_test,
+                inputs=["logistic_regression_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["logistic_regression_test_report", "logistic_regression_test_cm"],
+                name="logistic_regression_test_report_node"
+            ),
+            Node(
+                func=evaluate_model_test,
+                inputs=["SVC_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["svc_test_report", "svc_test_cm"],
+                name="svc_test_report_node"
+            ),
+            Node(
+                func=evaluate_model_test,
+                inputs=["XGBoost_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["xgboost_test_report", "xgboost_test_cm"],
+                name="xgboost_test_report_node"
+            ),
+            # GS TEST EVALUATION
+            Node(
+                func=evaluate_model_test,
+                inputs=["logistic_regression_gs_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["logistic_regression_gs_test_report", "logistic_regression_gs_test_cm"],
+                name="logistic_regression_gs_test_report_node"
+            ),
+            Node(
+                func=evaluate_model_test,
+                inputs=["svc_gs_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["svc_gs_test_report", "svc_gs_test_cm"],
+                name="svc_gs_test_report_node"
+            ),
+            Node(
+                func=evaluate_model_test,
+                inputs=["xgboost_gs_model",
+                        "X_train",
+                        "y_train",
+                        "X_test",
+                        "y_test",
+                        "params:experiment_params"],
+                outputs=["xgboost_gs_test_report", "xgboost_gs_test_cm"],
+                name="xgboost_gs_test_report_node"
+            ),
+            Node(
+                func=diagnose_per_class_metrics,
+                inputs=["logistic_regression_model", "X_train", "y_train", "params:experiment_params"],
+                outputs="logistic_regression_diagnostics",
+                name="logistic_regression_diagnostics_node"
+            ),
+            Node(
+                func=diagnose_per_class_metrics,
+                inputs=["SVC_model", "X_train", "y_train", "params:experiment_params"],
+                outputs="svc_diagnostics",
+                name="svc_diagnostics_node"
+            ),
+            Node(
+                func=diagnose_per_class_metrics,
+                inputs=["XGBoost_model", "X_train", "y_train", "params:experiment_params"],
+                outputs="xgboost_diagnostics",
+                name="xgboost_diagnostics_node"
+            )
         ]
     )

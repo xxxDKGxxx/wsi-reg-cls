@@ -1,28 +1,28 @@
 from kedro.pipeline import Node, Pipeline
 
-from .nodes import create_model_input_table, preprocess_companies, preprocess_shuttles
+from .nodes import enc_target, increment_feature_engineering, split
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
         [
             Node(
-                func=preprocess_companies,
-                inputs="companies",
-                outputs="preprocessed_companies",
-                name="preprocess_companies_node",
+                func=enc_target,
+                inputs="ortodoncja",
+                outputs="ortodoncja_target_enc",
+                name="enc_target_node",
             ),
             Node(
-                func=preprocess_shuttles,
-                inputs="shuttles",
-                outputs="preprocessed_shuttles",
-                name="preprocess_shuttles_node",
+                func=increment_feature_engineering,
+                inputs=["ortodoncja_target_enc", "params:feature_eng_params"],
+                outputs="ortodoncja_increment_feat_eng",
+                name="increment_feature_engineering_node",
             ),
             Node(
-                func=create_model_input_table,
-                inputs=["preprocessed_shuttles", "preprocessed_companies", "reviews"],
-                outputs="model_input_table",
-                name="create_model_input_table_node",
-            ),
+                func=split,
+                inputs=["ortodoncja_increment_feat_eng", "params:experiment_params"],
+                outputs=["X_train", "X_test", "y_train", "y_test"],
+                name="split_node"
+            )
         ]
     )
